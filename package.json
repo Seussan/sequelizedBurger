@@ -1,26 +1,28 @@
 {
   "name": "burger",
   "version": "1.0.0",
-  "description": "Eat-Da-Burger! is a restaurant app that lets users input the names of burgers they'd like to eat.",
+  "description": "Burger 2: The Sequel is a sequelized version of the Eat-Da-Burger! app from my Burger repository.",
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Seussan/Burger.git"
+    "url": "git+https://github.com/Seussan/sequelizedBurger.git"
   },
   "author": "Susan Allen",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/Seussan/Burger/issues"
+    "url": "https://github.com/Seussan/sequelizedBurger/issues"
   },
-  "homepage": "https://github.com/Seussan/Burger#readme",
+  "homepage": "https://github.com/Seussan/sequelizedBurger#readme",
   "dependencies": {
     "body-parser": "^1.17.2",
     "express": "^4.15.3",
     "express-handlebars": "^3.0.0",
     "method-override": "^2.3.9",
-    "mysql": "^2.13.0"
+    "mysql": "^2.13.0",
+    "mysql2": "^1.3.3",
+    "sequelize": "^4.0.0"
   }
 }

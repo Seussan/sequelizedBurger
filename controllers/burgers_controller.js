@@ -2,49 +2,73 @@ var express = require("express");
 
 var router = express.Router();
 
-// Import the model (burger.js) to use its database functions.
-var burger = require("../models/burger.js");
+var db = require("../models");
+
+// get route -> index
+router.get("/", function(req, res) {
+  // send us to the next get function instead.
+  res.redirect("/burgers");
+});
 
 // Create all our routes and set up logic within those routes where required.
-router.get("/", function(req, res) {
-  burger.selectAll(function(data) {
-    var hbsObject = {
-      burgers: data
+router.get("/burgers", function(req, res) {
+  db.Burger.findAll({
+    include: [db.Customer],
+    // Here we specify we want to return our burgers in ordered by ascending burger_name
+    order: [
+      ["burger_name", "ASC"]
+    ]
+  })
+  .then(function(dbBurger) {
+    var hbsObject = { 
+      burger: dbBurger 
     };
-    console.log(hbsObject);
-    res.render("index", hbsObject);
+    return res.render("index", hbsObject);
   });
 });
 
-router.post("/", function(req, res) {
-  burger.insertOne([
-    "burger_name", "devoured"
-  ], [
-    req.body.burger_name, req.body.devoured
-  ], function() {
+router.post("/burgers/create", function(req, res) {
+  db.Burger.create({
+    burger_name: req.body.burger_name
+  })
+  .then(function(dbBurger) {
+    console.log(dbBurger);
     res.redirect("/");
   });
 });
 
-router.put("/:id", function(req, res) {
-  var condition = "id = " + req.params.id;
-
-  console.log("condition", condition);
-
-  burger.updateOne({
-    devoured: req.body.devoured
-  }, condition, function() {
-    res.redirect("/");
-  });
+router.put("/burgers/update", function(req, res) {
+  if (req.body.customer) { // If we are given a customer, create customer and give this devoured burger
+    db.Customer.create({
+      customer: req.body.customer,
+      BurgerId: req.body.burger_id
+    })
+    .then(function(dbCustomer) {
+      return db.Burger.update({
+        devoured: true
+      }, {
+        where: {
+          id: req.body.burger_id
+        }
+      });
+    })
+    .then(function(dbBurger) {
+      res.redirect("/");
+    });
+  }
+    else {  // If we aren't given a customer, just update the burger to be devoured
+    db.Burger.update({
+      devoured: true
+    },
+    {
+      where: {
+        id: req.body.burger_id
+      }
+    })
+    .then(function(dbBurger) {
+      res.redirect("/");
+    });
+  }
 });
 
-router.delete("/:id", function(req, res) {
-  var condition = "id = " + req.params.id;
-
-  burger.delete(condition, function() {
-    res.redirect("/");
-  });
-});
-
-// Export routes for server.js to use.
 module.exports = router;
